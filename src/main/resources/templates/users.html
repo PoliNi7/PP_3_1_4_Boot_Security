@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th scope="col">firstname</th>
+        <th scope="col">lastname</th>
+        <th scope="col">email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user: ${users}">
+        <td th:text="${user.firstName}"/>
+        <td th:text="${user.lastName}"/>
+        <td th:text="${user.email}"/>
+        <td> <a th:href="@{/admin/{id}/edit(id=${user.getId()})}"/>Edit</td>
+        <td> <a th:href="@{/admin/{id}/delete(id=${user.getId()})}"/>Delete</td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/admin/new}">New user</a>
+<a th:href="@{/logout}">Logout</a>
+</body>
+</html>
