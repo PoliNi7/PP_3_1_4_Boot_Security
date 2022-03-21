@@ -1,8 +1,11 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.stereotype.Repository;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -12,6 +15,12 @@ public class UserDaoImpl implements UserDao{
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private RoleService roleService;
+
+    public UserDaoImpl(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @Override
     public List<User> getListUsers() {
@@ -32,6 +41,10 @@ public class UserDaoImpl implements UserDao{
     @Transactional
     @Override
     public void addUser(User user) {
+        for (Role role: user.getRoles()){
+            if (roleService.getRoleByName(role) == null)
+                roleService.addRole(role);
+        }
         entityManager.persist(user);
     }
 

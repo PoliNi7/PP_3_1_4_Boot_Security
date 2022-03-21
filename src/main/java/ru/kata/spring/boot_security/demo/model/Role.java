@@ -16,7 +16,7 @@ public class Role implements GrantedAuthority {
     @Column(name = "role")
     private String role;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles")
     private List<User> user;
 
     public Role(){}
@@ -51,6 +51,11 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
+        return role;
+    }
+
+    @Override
+    public String toString() {
         return role;
     }
 }

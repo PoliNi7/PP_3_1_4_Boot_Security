@@ -23,11 +23,23 @@ public class Init {
 
     @PostConstruct
     public void init(){
-        Role role = new Role("ROLE_ADMIN");
-        roleService.addRole(role);
+        Role roleA = new Role("ROLE_ADMIN");
+        roleService.addRole(roleA);
+        Role roleU = new Role("ROLE_USER");
+        roleService.addRole(roleU);
         Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        userService.addUser(new User("1", "1", "1", "1", roles));
+        roles.add(roleA);
+        roles.add(roleU);
+        Set<Role> roleAdmin = new HashSet<>();
+        roleAdmin.add(roleA);
+        Set<Role> roleUser = new HashSet<>();
+        roleUser.add(roleU);
+        userService.addUser(new User("1", "1", "1@mail.ru", "1", roles));
+        userService.addUser(new User("2", "2", "2@mail.ru", "2", roleAdmin));
+        userService.addUser(new User("3", "3", "3@mail.ru", "3", roleUser));
+        userService.addUser(new User("4", "4", "4@mail.ru", "4", roleUser));
+        userService.addUser(new User("5", "5", "5@mail.ru", "5", roleUser));
+        userService.addUser(new User("6", "6", "6@mail.ru", "6", roleUser));
     }
 }
 
