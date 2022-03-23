@@ -23,7 +23,9 @@ public class RoleDaoImpl implements RoleDao{
     @Transactional
     @Override
     public void addRole(Role role) {
-        entityManager.persist(role);
+        if (getRoleByName(role) == null) {
+            entityManager.persist(role);
+        }
     }
 
     @Override

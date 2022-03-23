@@ -41,10 +41,6 @@ public class UserDaoImpl implements UserDao{
     @Transactional
     @Override
     public void addUser(User user) {
-        for (Role role: user.getRoles()){
-            if (roleService.getRoleByName(role) == null)
-                roleService.addRole(role);
-        }
         entityManager.persist(user);
     }
 

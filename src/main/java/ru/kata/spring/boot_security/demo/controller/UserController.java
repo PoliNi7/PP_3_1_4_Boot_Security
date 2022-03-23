@@ -11,6 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,13 +38,13 @@ public class UserController {
         return "users";
     }
 
-    @GetMapping("/admin/new")
-    public String addUser(ModelMap model) {
-        return "newUser";
-    }
-
     @PostMapping("/admin/new")
-    public String createUser(@ModelAttribute("user") User user, @ModelAttribute("new-roles") String[] roles) {
+    public String createUser(@ModelAttribute("user") User user, @RequestParam("newRoles[]") String[] roles) {
+        Set<Role> roleSet = new HashSet<>();
+        for (String r: roles){
+            roleSet.add(roleService.getRoleByName(new Role(r)));
+        }
+        user.setRoles(roleSet);
         userService.addUser(user);
         return "redirect:/admin";
     }
@@ -54,20 +55,19 @@ public class UserController {
         return "user";
     }
 
-    @GetMapping("/admin/edit")
-    public String goToPageEditUser(Principal principal, ModelMap model) {
-        model.addAttribute("user", userService.getUserByEmail(principal.getName()));
-        return "editUser";
-    }
-
     @PostMapping ("/admin/edit")
-    public String updateUser(@ModelAttribute("user") User user) {
+    public String updateUser(@ModelAttribute("user") User user, @RequestParam("newRoles[]") String[] roles) {
+        Set<Role> roleSet = new HashSet<>();
+        for (String r: roles){
+            roleSet.add(roleService.getRoleByName(new Role(r)));
+        }
+        user.setRoles(roleSet);
         userService.updateUser(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
+    @PostMapping("/admin/delete")
+    public String deleteUser(@RequestParam("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
     }
