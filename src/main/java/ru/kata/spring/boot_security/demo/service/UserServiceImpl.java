@@ -6,22 +6,28 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserDao userDao;
 
+    private final RoleService roleService;
+
     private final PasswordEncoder passwordEncoder;
 
     @Lazy
-    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,16 +46,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userDao.getUserByEmail(email);
     }
 
-    @Transactional
     @Override
     public void addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.addUser(user);
     }
 
-    @Transactional
     @Override
     public void updateUser(User newUser) {
+        Set<Role> roleSet = new HashSet<>();
+        for (Role r: newUser.getRoles()){
+            roleSet.add(roleService.getRoleByName(r));
+        }
+        newUser.setRoles(roleSet);
         if (newUser.getPassword().equals("")){
             newUser.setPassword(userDao.getUserById(newUser.getId()).getPassword());
         } else {

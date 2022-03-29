@@ -7,7 +7,6 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
