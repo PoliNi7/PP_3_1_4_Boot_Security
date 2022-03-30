@@ -54,11 +54,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void updateUser(User newUser) {
-        Set<Role> roleSet = new HashSet<>();
-        for (Role r: newUser.getRoles()){
-            roleSet.add(roleService.getRoleByName(r));
-        }
-        newUser.setRoles(roleSet);
         if (newUser.getPassword().equals("")){
             newUser.setPassword(userDao.getUserById(newUser.getId()).getPassword());
         } else {

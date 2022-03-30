@@ -23,16 +23,16 @@ public class RoleDaoImpl implements RoleDao{
     @Transactional
     @Override
     public void addRole(Role role) {
-        if (getRoleByName(role) == null) {
+        if (getRoleByName(role.getRole()) == null) {
             entityManager.persist(role);
         }
     }
 
     @Override
-    public Role getRoleByName(Role role) {
+    public Role getRoleByName(String role) {
         return entityManager.createQuery("select r from Role r", Role.class)
                 .getResultStream()
-                .filter(name -> name.getRole().equals(role.getRole()))
+                .filter(name -> name.getRole().equals(role))
                 .findAny()
                 .orElse(null);
     }
