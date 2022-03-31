@@ -2,7 +2,19 @@ const urlUsers = 'http://localhost:8080/api/users'
 const urlRoles = 'http://localhost:8080/api/roles'
 
 getUsers()
-navbar()
+navbarAndUserInfoPage()
+roleAdd()
+
+async function roleAdd() {
+    let listRolesToAdd = ''
+    await fetch(urlRoles)
+        .then(response => response.json())
+        .then(roles => roles.forEach(role => {
+            listRolesToAdd += `
+                        <option value="${role.role}"">${role.role.replace("ROLE_", "")}</option>`
+        }))
+    document.getElementById('roleAdd').innerHTML = listRolesToAdd
+}
 
 $(document).ready(function() {
     $('#editUser').on('hidden.bs.modal', function() {
@@ -33,16 +45,58 @@ async function getUsers() {
     elementUsersTBody.innerHTML = listUsers
 }
 
-function navbar(){
+function navbarAndUserInfoPage(){
     const elementNavbar = document.getElementById('Navbar')
+    const elementUserInfoPage = document.getElementById('userInfoPage')
 
     fetch(urlUsers + '/authUser')
         .then(response => response.json())
-        .then(authUser => elementNavbar.textContent = `${authUser.username} with roles: ${authUser.authorities.map(a => a.role).map(name => name.replace("ROLE_", ""))}`)
+        .then(authUser => {
+            elementNavbar.textContent = `${authUser.username} with roles: ${authUser.authorities.map(a => a.role).map(name => name.replace("ROLE_", ""))}`
+            elementUserInfoPage.innerHTML = `
+                <tr>
+                    <td>${authUser.firstName}</td>
+                    <td>${authUser.lastName}</td>
+                    <td>${authUser.email}</td>
+                    <td>${authUser.roles.map(r => " " + r.role).map(name => name.replace("ROLE_", ""))}</td>
+                </tr>`
+        })
 }
 
-//из полей сделать юзера
+async function addUser(){
+
+    console.log('add user')
+    let user =
+        {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            roles: []
+        }
+
+    let stringRoles = document.getElementById('roleAdd').getElementsByTagName('option')
+    for (let i = 0; i < stringRoles.length; i++) {
+        if (stringRoles[i].selected){
+            await fetch(urlRoles + '/' + stringRoles[i].value)
+                .then(response => response.json())
+                .then(role => user.roles.push(role))
+        }
+    }
+
+    await fetch(urlUsers, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(user)
+    });
+    getUsers()
+    $('#usersTableButton').click();
+}
+
 async function editUser(id){
+    console.log('edit user')
     let user =
     {
         id: document.getElementById('idEdit').value,
@@ -82,6 +136,7 @@ async function editUser(id){
 }
 
 async function deleteUser(id) {
+    console.log('delete user')
     await fetch(urlUsers + '/' + id, {
         method: 'DELETE',
         headers: {
@@ -107,7 +162,7 @@ function fillEditModalField(id) {
                 .then(response => response.json())
                 .then(roles => roles.forEach(role => {
                     listRoles += `
-                        <option value="${role.role}" id="${role.role}">${role.role.replace("ROLE_", "")}</option>`
+                        <option value="${role.role}">${role.role.replace("ROLE_", "")}</option>`
                 }))
             document.getElementById('roleEdit').innerHTML = listRoles
             document.getElementById('modalEditButton').addEventListener('click', () => editUser(user.id))

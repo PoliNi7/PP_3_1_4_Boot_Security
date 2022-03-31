@@ -12,13 +12,12 @@
 
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
-<!--        <p class="navbar-brand m-0" th:text="${auth.getUsername()} + ' with roles: ' + ${auth.getAuthorities()}">-->
-            Navbar</p>
+        <p class="navbar-brand m-0" id="Navbar"></p>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-<!--                    <a class="nav-link" th:href="@{/logout}">Logout</a>-->
+                    <a class="nav-link" th:href="@{/logout}">Logout</a>
                 </li>
             </ul>
         </div>
@@ -49,13 +48,8 @@
                             <th>Role</th>
                         </tr>
                         </thead>
-                        <tbody>
-<!--                        <tr th:object="${user}">-->
-<!--                            <td th:text="${user.firstName}"></td>-->
-<!--                            <td th:text="${user.lastName}"></td>-->
-<!--                            <td th:text="${user.email}"></td>-->
-<!--                            <td th:text="${user.roles}"></td>-->
-<!--                        </tr>-->
+                        <tbody id="userInfoPage">
+
                         </tbody>
                     </table>
                 </div>
@@ -75,5 +69,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<script th:src="@{/js/user.js}" type="text/javascript"></script>
 </body>
 </html>
